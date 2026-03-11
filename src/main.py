@@ -12,10 +12,10 @@ cap = cv2.VideoCapture(0)
 ret, frame = cap.read() 
 
 if ret:
-    # Punto 1.1: Guardamos el array de la imagen en un archivo físico .jpg
+    # --- Punto 1.1: Guardamos el array de la imagen en un archivo físico .jpg ---
     cv2.imwrite('images/captura_paso1.jpg', frame)
     
-    # Punto 1.2: El 'shape' nos da (alto, ancho, canales de color)
+    # --- Punto 1.2: El 'shape' nos da (alto, ancho, canales de color) ---
     # Accedemos a los índices para imprimir la resolución
     print(f"Resolución: Ancho {frame.shape[1]} x Alto {frame.shape[0]}")
 
@@ -29,9 +29,18 @@ while True:
     
     if not ret:
         break
+    # --- Punto 1.5 (Dibujar círculo en el centro) ---
+    alto, ancho, _ = frame_live.shape
+    cv2.circle(frame_live, (ancho // 2, alto // 2), 50, (0, 255, 0), 3)
+
+    # --- Punto 1.6 (Crear imagen pequeña) ---
+    frame_mini = cv2.resize(frame_live, (100, 100))
 
     # Punto 1.4: Mostrar la cámara en una ventana en LIVE
     cv2.imshow("Webcam LIVE", frame_live)
+
+    # --- Mostrar la ventana pequeña ---
+    cv2.imshow("Miniatura 100x100", frame_mini)
 
     # Punto 1.3: El programa se detiene si pulsas la 'q'
     if cv2.waitKey(1) & 0xFF == ord('q'):
