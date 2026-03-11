@@ -3,46 +3,46 @@ import os
 import time
 from ultralytics import YOLO
 
-# 1. Cargar el modelo YOLOv8 Small (Punto 2.1)
+# 1. Cargar el modelo
 model = YOLO('yolov8s.pt')
 
-# 2. Capturar una imagen de la webcam
+# 2. Abrir la cámara (SIN cerrarla antes del bucle)
 cap = cv2.VideoCapture(0)
-# Dejamos un pequeño delay para que la cámara autoenfoque
-time.sleep(1) 
-ret, frame = cap.read()
-cap.release()
-
-if ret:
-    # 3. Hacer la inferencia (Detección de objetos)
-    results = model(frame)
-
-    # 4. Dibujar las detecciones en la imagen (.plot() ya nos da el dibujo hecho)
-    # Cogemos el primer resultado [0]
-    frame_con_detecciones = results[0].plot()
-
-    # 5. Asegurarnos de que existe la carpeta para guardar
-    if not os.path.exists('outputs'):
-        os.makedirs('outputs')
-
-    # 6. Guardar en .jpg y en .png (Punto 2.1)
-    path_jpg = 'outputs/deteccion.jpg'
-    path_png = 'outputs/deteccion.png'
-    
-    cv2.imwrite(path_jpg, frame_con_detecciones)
-    cv2.imwrite(path_png, frame_con_detecciones)
-
-    # 7. --- COMPARATIVA DE OCUPACIÓN ---
-    size_jpg = os.path.getsize(path_jpg) / 1024  # Pasamos a KB
-    size_png = os.path.getsize(path_png) / 1024  # Pasamos a KB
-
-    print("\n" + "="*30)
-    print(" RESULTADOS DE OCUPACIÓN ")
-    print("="*30)
-    print(f"Foto en JPG: {size_jpg:.2f} KB")
-    print(f"Foto en PNG: {size_png:.2f} KB")
-    print(f"El PNG es {size_png/size_jpg:.1f} veces más grande que el JPG")
-    print("="*30)
-
-else:
+prev_time = 0
+if not cap.isOpened():
     print("Error: No se pudo acceder a la cámara.")
+    exit()
+
+while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Error al leer el frame")
+            break
+        # 3. Hacer la inferencia (Detección de objetos)
+        # Usamos stream=True para que sea más fluido
+        results = model(frame, stream=True, verbose=False)
+
+        # 4. Dibujar las detecciones en la imagen
+        for r in results:
+            frame_con_detecciones = r.plot()
+
+        # 5. Cálculo de FPS
+        curr_time = time.time()
+        tiempo_refresco = (curr_time - prev_time) if prev_time != 0 else 0
+        fps = 1 / tiempo_refresco if tiempo_refresco > 0 else 0
+        prev_time = curr_time
+
+        # Mostrar FPS y tiempo de refresco (en segundos) en el frame
+        cv2.putText(frame_con_detecciones, f"FPS: {int(fps)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+        cv2.putText(frame_con_detecciones, f"Refresco: {tiempo_refresco*1000:.1f} ms", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+
+        # 6. Mostrar el vídeo
+        cv2.imshow("YOLOv8 Real-Time", frame_con_detecciones)
+
+        # 7. Salida
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+# Al salir del bucle, limpiamos todo
+cap.release()
+cv2.destroyAllWindows()
