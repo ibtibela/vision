@@ -44,7 +44,7 @@ while True:
     alto, ancho, _ = frame_live.shape
     cv2.circle(frame_live, (ancho // 2, alto // 2), 50, (0, 255, 0), 3)
 
-    # --- PUNTO 1.7: Mostrar FPS y tiempo de refresco (en segundos) en el frame ---
+    # --- PUNTO 1.8: Mostrar FPS y tiempo de refresco (en segundos) en el frame ---
     # Ponemos los FPS arriba
     cv2.putText(frame_live, f"FPS: {int(fps)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
     # Ponemos el tiempo de refresco debajo (en milisegundos para que se entienda mejor)
