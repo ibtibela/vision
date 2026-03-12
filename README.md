@@ -126,3 +126,4 @@ Se ha verificado la capacidad del modelo para identificar y clasificar múltiple
 1. Instalar dependencias: `pip install -r requirements.txt`
 2. Ejecutar Fase 1 (Básico): `python src/video_basico.py` (o tu nombre de archivo)
 3. Ejecutar Fase 2 (YOLO): `python src/yolo.py`
+* *Nota: Puedes cambiar `used_device = 0` (GPU) o `"cpu"` en el código para ver las diferencias.*
