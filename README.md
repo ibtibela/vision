@@ -92,6 +92,34 @@ Se ha implementado una medición detallada de cada etapa del programa para anali
 * **Captura:** Tiempo de respuesta de la webcam.
 * **Inferencia:** Tiempo de procesado de la red neuronal (YOLOv8s).
 * **Ciclo Total:** Suma de captura, inferencia y renderizado.
+
+## 2.6 Comparativa de Rendimiento: Modelos vs Hardware
+
+Se ha realizado un análisis comparativo utilizando tres variantes del modelo (Small, Medium, Large) evaluando el rendimiento en CPU y en GPU.
+
+### Tabla de Resultados
+
+| Modelo | Dispositivo | Inferencia (ms) | Ciclo Total (ms) | FPS |
+| :--- | :--- | :--- | :--- | :--- |
+| **YOLOv8s** (Small) | CPU | 128.0 | 128.3 | 7 |
+| **YOLOv8s** (Small) | **GPU** | **8.3** | **27.6** | **36** |
+| **YOLOv8m** (Medium)| CPU | 300.3 | 300.7 | 3 |
+| **YOLOv8m** (Medium)| **GPU** | **14.9** | **29.2** | **34** |
+| **YOLOv8l** (Large) | CPU | 590.3 | 591.0 | 1 |
+| **YOLOv8l** (Large) | **GPU** | **21.1** | **27.2** | **36** |
+
+
+
+### Conclusiones del análisis
+
+* **Rendimiento del Hardware:** Se observa que la GPU reduce drásticamente los tiempos de respuesta, llegando a ser hasta 28 veces más veloz que la CPU cuando se trabaja con modelos de gran tamaño.
+* **Identificación de Cuellos de Botella:** El análisis permite distinguir que, mientras la CPU se colapsa debido al esfuerzo de cálculo (inferencia), en la GPU el factor limitante deja de ser la IA y pasa a ser la propia velocidad de la webcam para captar imágenes.
+* **Optimización y Fluidez:** El uso de aceleración por hardware resulta fundamental, ya que permite ejecutar modelos de alta precisión (como el Large) manteniendo una fluidez de 36 FPS, superando incluso el rendimiento del modelo más básico funcionando en CPU.
+
+## 7. Detección Multiclase (Objetos distintos a personas)
+
+Se ha verificado la capacidad del modelo para identificar y clasificar múltiples categorías de objetos de forma simultánea, aprovechando que YOLOv8 incluye por defecto el dataset COCO (80 clases).
+
 ---
 
 ## 🛠️ Instalación y Uso

@@ -3,8 +3,8 @@ import os
 import time
 from ultralytics import YOLO
 
-# 1. Cargar el modelo
-model = YOLO('yolov8s.pt')
+# 1. Cargar el modelo (probar con 'yolov8s.pt', 'yolov8m.pt', 'yolov8l.pt' )
+model = YOLO('yolov8l.pt')
 
 # 2. Abrir la cámara
 cap = cv2.VideoCapture(0)
@@ -16,7 +16,7 @@ if not cap.isOpened():
 # --- CONFIGURACIÓN DE HARDWARE ---
 # Opción A: "cpu" para forzar el procesador
 # Opción B: 0 (o "cuda") para usar la tarjeta NVIDIA
-used_device="cpu"
+used_device="cuda"
 
 while True:
         t_inicio = time.time()  # Empieza el cronómetro del ciclo total
@@ -28,7 +28,7 @@ while True:
             print("Error al leer el frame")
             break
         # 2. Medir Procesado (Inferencia)
-        t_inferencia_start = time.time() # <--- NUEVO
+        t_inferencia_start = time.time()
         results = model(frame, stream=True, device=used_device, verbose=False)
         
         for r in results:
