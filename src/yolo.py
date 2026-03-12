@@ -6,12 +6,17 @@ from ultralytics import YOLO
 # 1. Cargar el modelo
 model = YOLO('yolov8s.pt')
 
-# 2. Abrir la cámara (SIN cerrarla antes del bucle)
+# 2. Abrir la cámara
 cap = cv2.VideoCapture(0)
 prev_time = 0
 if not cap.isOpened():
     print("Error: No se pudo acceder a la cámara.")
     exit()
+
+# --- CONFIGURACIÓN DE HARDWARE ---
+# Opción A: "cpu" para forzar el procesador
+# Opción B: 0 (o "cuda") para usar la tarjeta NVIDIA
+used_device="cpu"
 
 while True:
         ret, frame = cap.read()
@@ -20,7 +25,7 @@ while True:
             break
         # 3. Hacer la inferencia (Detección de objetos)
         # Usamos stream=True para que sea más fluido
-        results = model(frame, stream=True, verbose=False)
+        results = model(frame, stream=True, device=used_device, verbose=False)
 
         # 4. Dibujar las detecciones en la imagen
         for r in results:
