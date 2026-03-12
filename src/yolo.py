@@ -19,29 +19,32 @@ if not cap.isOpened():
 used_device="cpu"
 
 while True:
+        t_inicio = time.time()  # Empieza el cronómetro del ciclo total
+        # 1. Medir toma de imagen
+        t_captura_start = time.time()
         ret, frame = cap.read()
+        t_captura = (time.time() - t_captura_start) * 1000
         if not ret:
             print("Error al leer el frame")
             break
-        # 3. Hacer la inferencia (Detección de objetos)
-        # Usamos stream=True para que sea más fluido
+        # 2. Medir Procesado (Inferencia)
+        t_inferencia_start = time.time() # <--- NUEVO
         results = model(frame, stream=True, device=used_device, verbose=False)
-
-        # 4. Dibujar las detecciones en la imagen
+        
         for r in results:
             frame_con_detecciones = r.plot()
+            
+        t_inferencia = (time.time() - t_inferencia_start) * 1000
 
-        # 5. Cálculo de FPS
-        curr_time = time.time()
-        tiempo_refresco = (curr_time - prev_time) if prev_time != 0 else 0
-        fps = 1 / tiempo_refresco if tiempo_refresco > 0 else 0
-        prev_time = curr_time
+        # 3. Cálculo de FPS y Ciclo Total
+        t_ciclo_total = (time.time() - t_inicio) * 1000 
+        fps = 1000 / t_ciclo_total if t_ciclo_total > 0 else 0
 
-        # Mostrar FPS y tiempo de refresco (en segundos) en el frame
-        cv2.putText(frame_con_detecciones, f"FPS: {int(fps)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-        cv2.putText(frame_con_detecciones, f"Refresco: {tiempo_refresco*1000:.1f} ms", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
-
-        # 6. Mostrar el vídeo
+        # 4. Mostrar FPS y tiempos en el frame
+        cv2.putText(frame_con_detecciones, f"FPS: {int(fps)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(frame_con_detecciones, f"Ciclo Total: {t_ciclo_total:.1f} ms", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+        cv2.putText(frame_con_detecciones, f"Inferencia: {t_inferencia:.1f} ms", (10, 105), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
+        cv2.putText(frame_con_detecciones, f"Captura: {t_captura:.1f} ms", (10, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)        # 6. Mostrar el vídeo
         cv2.imshow("YOLOv8 Real-Time", frame_con_detecciones)
 
         # 7. Salida

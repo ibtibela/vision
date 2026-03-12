@@ -83,6 +83,15 @@ Parece raro que la CPU trabaje más cuando la gráfica está activa, pero tiene 
 
 **Usando la CPU (Vídeo lento y entrecortado):**
 ![Monitorización CPU](./docs/monitorizacion_cpu.png)
+
+## 2.5 Análisis del Ciclo de Procesamiento
+
+Se ha implementado una medición detallada de cada etapa del programa para analizar el rendimiento.
+
+### Desglose de Tiempos:
+* **Captura:** Tiempo de respuesta de la webcam.
+* **Inferencia:** Tiempo de procesado de la red neuronal (YOLOv8s).
+* **Ciclo Total:** Suma de captura, inferencia y renderizado.
 ---
 
 ## 🛠️ Instalación y Uso
