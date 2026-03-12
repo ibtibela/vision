@@ -1,4 +1,4 @@
-# Librerías necesarias para la Fase 1
+# Librerías necesarias
 opencv-python>=4.8.0
 numpy>=1.21.0
 ultralytics>=8.0.0
